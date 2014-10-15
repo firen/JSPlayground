@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <style type="text/css">
+        img {
+            transform: rotate(14deg);
+            transform-origin: 50% 100%;
+        }
+    </style>
+
+    <script src="bower_components/angular/angular.js"></script>
+
+    <script type="text/javascript">
+        angular.module("intervalExample", [])
+                .controller("ExampleCtrl", ['$scope', '$interval',
+            function($scope, $interval) {
+                $scope.rotate = -90;
+                $scope.rotationStyle = {'transform': 'rotate('+$scope.rotate+'deg)'};
+                $interval(function() {
+                    $scope.rotate++;
+                    $scope.rotationStyle = {'transform': 'rotate('+$scope.rotate+'deg)'};
+                }, 100);
+            }])
+    </script>
+</head>
+
+<body ng-app="intervalExample">
+<div ng-controller="ExampleCtrl">
+<img src="tire.jpg" style="width: 25%; height: 25%" ng-style="rotationStyle" />
+{{rotate}}
+</div>
+</body>
+
+</html>

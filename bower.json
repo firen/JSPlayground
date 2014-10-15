@@ -1,0 +1,9 @@
+{
+  "name": "tier",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "1.3.0"
+  }
+}
