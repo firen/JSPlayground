@@ -11,26 +11,50 @@
         }
     </style>
 
+    <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
 
     <script type="text/javascript">
         angular.module("intervalExample", [])
-                .controller("ExampleCtrl", ['$scope', '$interval',
-            function($scope, $interval) {
+                .controller("ExampleCtrl", ['$scope', '$interval', '$interpolate', '$element',
+            function($scope, $interval, $interpolate, $element) {
                 $scope.rotate = -90;
+                $scope.position = 0;
+                $scope.step = -1;
                 $scope.rotationStyle = {'transform': 'rotate('+$scope.rotate+'deg)'};
                 $interval(function() {
-                    $scope.rotate++;
-                    $scope.rotationStyle = {'transform': 'rotate('+$scope.rotate+'deg)'};
+                    if( $scope.rotate > -90) {
+                        $scope.rotate += $scope.step;
+                    }
+                    if( $scope.rotate >= 0) {
+                        $scope.step = 5;
+                    }
+                    if( $scope.rotate >= 90 ) {
+                        $scope.rotate = -90;
+                        $scope.position++;
+                        $scope.step = -1;
+                    }
+                    var transformation = $interpolate('translate({{position}}px, 0px) rotate({{rotate}}deg)')
+                    var imgWidth = $element.find('#opona').height();
+                    $scope.rotationStyle = {'transform': transformation({rotate: $scope.rotate, position: $scope.position * imgWidth})};
                 }, 100);
+
+                $scope.pullTire = function() {
+                    $scope.rotate+=5;
+                }
             }])
     </script>
 </head>
 
 <body ng-app="intervalExample">
 <div ng-controller="ExampleCtrl">
-<img src="tire.jpg" style="width: 25%; height: 25%" ng-style="rotationStyle" />
+<img id="opona" src="tire.jpg" ng-style="rotationStyle" ng-click="pullTire()"/>
+<br/>
+<br/>
+<br/>
+<br/>
 {{rotate}}
+{{rotationStyle}}
 </div>
 </body>
 
