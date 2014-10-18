@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var zip = require('gulp-zip');
+var livereload = require('gulp-livereload');
 
 gulp.task('default', function() {
 
@@ -15,6 +16,7 @@ gulp.task('build', function() {
 
 gulp.task('build-otf', function() {
     gulp.watch('src/**/*', ['build']);
+    gulp.watch('build/**/*').on('change', livereload.changed);
 });
 
 gulp.task('zip', function() {
