@@ -2,110 +2,14 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>F2F</title>
 
-    <script src="js/jquery.js"></script>
-    <script src="js/angular.js"></script>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/angular.js"></script>
 
-    <script type="text/javascript">
-        var ROTATE_STEP_FORWARD = 8;
-        var ROTATE_STEP_BACKWARD = -8;
-        var PULL_TIRE_STEP = 30;
-        var TIRE_SELECTOR = "div.opona";
-        var START_DEGREE = 0;
-        var MID_DEGREE = 90;
-        var STOP_DEGREE = 180;
+    <script type="text/javascript" src="js/tire_game.js"></script>
 
-        angular.module("intervalExample", [])
-                .controller("ExampleCtrl", ['$scope', '$interval', '$interpolate', '$element',
-            function($scope, $interval, $interpolate, $element) {
-                $scope.rotate = START_DEGREE;
-                $scope.position = 0;
-                $scope.step = ROTATE_STEP_BACKWARD;
-                $scope.rotationStyle = {'transform': 'rotate('+$scope.rotate+'deg)'};
-                $interval(function() {
-                    $scope.rotationStyle = {'transform-origin': '85% 50%'};
-                    if( $scope.rotate > START_DEGREE) {
-                        $scope.rotate += $scope.step;
-                    }
-                    if( $scope.rotate >= MID_DEGREE) {
-//                        $scope.rotationStyle = {'transform-origin': '100% 50%'};
-                        $scope.step = ROTATE_STEP_FORWARD;
-                    }
-                    if( $scope.rotate >= STOP_DEGREE ) {
-                        $scope.rotate = START_DEGREE;
-                        $scope.position++;
-                        $scope.step = ROTATE_STEP_BACKWARD;
-                    }
-                    if( $scope.rotate < START_DEGREE) {
-                        $scope.rotate = START_DEGREE;
-                    }
-                    var transformation = $interpolate('translate(0px, 0px) rotate({{rotate}}deg)');
-                    var imgWidth = $element.find(TIRE_SELECTOR).height();
-                    var transformValue = transformation({rotate: $scope.rotate, position: $scope.position * imgWidth});
-                    if( $scope.position % 2 == 0) {
-//                        transformValue = 'scaleX(-1) '+transformValue;
-                    }
-                    jQuery.extend($scope.rotationStyle, {'transform': transformValue});
-                    if( $scope.position % 2 == 0) {
-                        jQuery.extend($scope.rotationStyle, {'background-image': 'url("tire.png")'});
-                    } else {
-                        jQuery.extend($scope.rotationStyle, {'background-image': 'url("tire_mirror.png")'});
-                    }
-                }, 100);
-
-                $scope.pullTire = function() {
-                    $scope.rotate+=PULL_TIRE_STEP;
-                }
-            }])
-    </script>
-
-    <style type="text/css">
-        * {
-            /*border: dashed;*/
-        }
-
-        .stages {
-            margin: 100px;
-            /*align-content: center;*/
-            /*position: relative;*/
-            width: 100%;
-        }
-        .stage {
-            width: 150px;
-            height: 50px;
-            margin-left: -50px;
-            float: left;
-            /*text-align: center;*/
-            /*position: relative;*/
-            /*bottom: 0;*/
-            background-color: blue;
-            /*padding: 0px;*/
-            padding: 0px;
-        }
-        .stage > div {
-            float: left;
-            /*position: absolute;*/
-        }
-        div.opona {
-            margin-left: -25px;
-            width: 150px;
-            height: 50px;
-            background: url("tire.png") no-repeat;
-            background-size: 100% 100%;
-
-            /*transform-origin: 80% 50%;*/
-            z-index: 10;
-            /*float: left;*/
-            /*transform: rotate(-90deg);*/
-        }
-
-        #opona {
-            /*float: left;*/
-            /*width: 20px;*/
-            /*height: 100px;*/
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 
 <body ng-app="intervalExample" ng-controller="ExampleCtrl">
@@ -115,7 +19,7 @@
     </div>
     <div>
         <div class="stages">
-            <div class="stage" ng-init="items=[1,2,3,4]" ng-repeat="item in [1,2,3,4]"><div>{{item}}</div><div ng-if="item==position+1" class="opona" ng-style="rotationStyle" ng-click="pullTire()"></div></div>
+            <div class="stage" ng-repeat="item in stages"><div ng-if="$index < position+1" class="stage_content">{{item}}</div><div ng-if="$index==position" class="opona" ng-style="rotationStyle" ng-click="pullTire()"></div></div>
         </div>
     </div>
 </body>

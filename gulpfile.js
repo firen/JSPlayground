@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var zip = require('gulp-zip');
 var livereload = require('gulp-livereload');
 var del = require('del');
+var less = require('gulp-less');
 
 gulp.task('default', function() {
 
@@ -13,10 +14,15 @@ gulp.task('clean', function() {
 });
 
 gulp.task('build', function() {
-    gulp.src(['bower_components/angular/angular.js', 'bower_components/jquery/dist/jquery.js'])
+    gulp.src(['bower_components/angular/angular.js', 'bower_components/jquery/dist/jquery.js', 'bower_components\less\dist\less-1.7.5.js'])
         .pipe(gulp.dest('build/js'));
-    gulp.src(['src/**/*'])
+    gulp.src(['src/**/*', '!src/**/*.less', '!src/**/*.js'])
         .pipe(gulp.dest('build'));
+    gulp.src(['src/**/*.less'])
+        .pipe(less())
+        .pipe(gulp.dest('build/css'));
+    gulp.src(['src/**/*.js'])
+        .pipe(gulp.dest('build/js'));
 });
 
 gulp.task('build-otf', function() {
