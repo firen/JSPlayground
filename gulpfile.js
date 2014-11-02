@@ -14,7 +14,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('build', function() {
-    gulp.src(['bower_components/angular/angular.js', 'bower_components/jquery/dist/jquery.js', 'bower_components\less\dist\less-1.7.5.js'])
+    gulp.src(['bower_components/angular/angular.js', 'bower_components/jquery/dist/jquery.js', 'bower_components/less/dist/less-1.7.5.js'])
         .pipe(gulp.dest('build/js'));
     gulp.src(['src/**/*', '!src/**/*.less', '!src/**/*.js'])
         .pipe(gulp.dest('build'));
