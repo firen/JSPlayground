@@ -19,7 +19,7 @@
     </div>
     <div>
         <div class="stages">
-            <div class="stage" ng-repeat="item in stages"><div ng-if="item.position < position+1" class="stage_content">{{item.description}}</div><div ng-if="item.position==position" class="opona" ng-style="rotationStyle" ng-click="pullTire()"></div></div>
+            <div class="stage" ng-repeat="item in stages"><div ng-if="item.position < position+1" class="stage_content">{{item.description}}</div><div ng-if="selectTire(position).currentPosition == item.position" class="opona" ng-style="rotationStyle" ng-click="pullTire()"></div></div>
         </div>
     </div>
 </body>

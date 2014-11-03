@@ -1,45 +1,62 @@
-var TIRE_PARAMS = {
+var TIRE_PARAMS_RIGHT = {
     ROTATE_STEP_FORWARD: 8,
     ROTATE_STEP_BACKWARD: -8,
     PULL_TIRE_STEP: 30,
     START_DEGREE: 0,
     MID_DEGREE: 90,
-    STOP_DEGREE: 180
+    STOP_DEGREE: 180,
+    ROTATION_STYLE: {'transform-origin': '85% 50%'}
+};
+
+var TIRE_PARAMS_LEFT = {
+    ROTATE_STEP_FORWARD: -8,
+    ROTATE_STEP_BACKWARD: 8,
+    PULL_TIRE_STEP: -30,
+    START_DEGREE: 0,
+    MID_DEGREE: -90,
+    STOP_DEGREE: -180,
+    ROTATION_STYLE: {'transform-origin': '15% 50%'}
 };
 
 angular.module("intervalExample", [])
     .controller("ExampleCtrl", ['$scope', '$interval', '$interpolate',
         function ($scope, $interval, $interpolate) {
-            var tireBuilder = function (tireParams) {
+            var tireBuilder = function (tireParams, startPosition, endPosition) {
+                var rotateClockwise = tireParams.ROTATE_STEP_FORWARD > 0 ? 1 : -1;
                 return {
                     rotate: tireParams.START_DEGREE,
                     step: tireParams.ROTATE_STEP_BACKWARD,
-                    position: 0,
+                    startPosition: startPosition,
+                    endPosition: endPosition,
+                    currentPosition: startPosition,
 
                     doRotate: function () {
-                        if (this.rotate > tireParams.START_DEGREE) {
+                        if( this.currentPosition >= 3 ) {
+                            this.currentPosition;
+                        }
+                        if (this.rotate * rotateClockwise > tireParams.START_DEGREE * rotateClockwise) {
                             this.rotate += this.step;
                         }
-                        if (this.rotate >= tireParams.MID_DEGREE) {
+                        if (this.rotate * rotateClockwise >= tireParams.MID_DEGREE * rotateClockwise) {
                             this.step = tireParams.ROTATE_STEP_FORWARD;
                         }
-                        if (this.rotate >= tireParams.STOP_DEGREE) {
+                        if (this.rotate * rotateClockwise >= tireParams.STOP_DEGREE * rotateClockwise) {
                             this.rotate = tireParams.START_DEGREE;
-                            this.position++;
+                            this.currentPosition++;
                             this.step = tireParams.ROTATE_STEP_BACKWARD;
                         }
-                        if (this.rotate < tireParams.START_DEGREE) {
+                        if (this.rotate * rotateClockwise < tireParams.START_DEGREE * rotateClockwise) {
                             this.rotate = tireParams.START_DEGREE;
                         }
                     },
 
                     doRender: function(scope) {
-                        scope.rotationStyle = {'transform-origin': '85% 50%'};
-                        scope.position = this.position;
+                        scope.rotationStyle = tireParams.ROTATION_STYLE;
+                        scope.position = this.currentPosition;
                         var transformation = $interpolate('rotate({{rotate}}deg)');
                         var transformValue = transformation({rotate: this.rotate});
                         jQuery.extend(scope.rotationStyle, {'transform': transformValue});
-                        if (this.position % 2 == 0) {
+                        if (this.currentPosition % 2 == 0) {
                             jQuery.extend(scope.rotationStyle, {'background-image': 'url("tire.png")'});
                         } else {
                             jQuery.extend(scope.rotationStyle, {'background-image': 'url("tire_mirror.png")'});
@@ -51,7 +68,22 @@ angular.module("intervalExample", [])
                     }
                 }
             };
-            $scope.tire = tireBuilder(TIRE_PARAMS, $scope);
+            $scope.position = 3;
+
+            $scope.tires = [
+                tireBuilder(TIRE_PARAMS_RIGHT, 0, 2),
+                tireBuilder(TIRE_PARAMS_LEFT, 3, 5),
+                tireBuilder(TIRE_PARAMS_RIGHT, 6, 8)
+            ];
+
+            $scope.selectTire = function(index) {
+                for(var i = 0; i < $scope.tires.length; i++) {
+                    if(  $scope.tires[i].startPosition <= index && $scope.tires[i].endPosition >= index ) {
+                        return $scope.tires[i];
+                    }
+                }
+            };
+
             $scope.stages = [
                 {position: 0, description: "... dass du Lust hast zu trainieren, regelmäßig und anhaltend."},
                 {position: 1, description: "... dass du Fortschritte früh wahrnimmst (nicht wie z.B. beim Six-Pack, das sich erst nach ein paar Monaten abzeichnet)."},
@@ -65,10 +97,13 @@ angular.module("intervalExample", [])
                 {position: 9, description: "... dass du deine Freunde beim Trainieren nachhaltig unterstützst und diese wiederum dich."}
             ];
 
-            $interval(function() {$scope.tire.doRotate();$scope.tire.doRender($scope)}, 100);
+            $interval(function() {
+                $scope.selectTire($scope.position).doRotate();
+                $scope.selectTire($scope.position).doRender($scope);
+            }, 100);
 
             $scope.pullTire = function () {
-                $scope.tire.pullTire();
+                $scope.selectTire($scope.position).pullTire();
             };
 
         }]);
